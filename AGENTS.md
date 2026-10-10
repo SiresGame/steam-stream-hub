@@ -13,3 +13,5 @@
 - Admin area lives under src/routes/_authenticated/admin*; writes go through the browser client and are protected by admin-only RLS via has_role, because the UI check alone is not a security boundary.
 - The first account to sign up becomes admin through a database trigger, so the owner can bootstrap without manual role edits.
 - Seeded games without image_url fall back to bundled covers by slug in src/lib/catalog.ts.
+- The landing page links to the preserved catalog at /computer; downloaded reference media is imported through asset pointers to keep binaries off the repository.
+- Promo redemptions are authorized and consumed atomically by rental SQL functions; frontend promo pricing mirrors server rounding, so displayed totals match charges.

@@ -1,121 +1,43 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ChevronDown, Gamepad2, Headphones, Menu, Search, SlidersHorizontal, UserRound, X } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { ArrowDown, Cloud, Clock3, ShieldCheck, Monitor, Smartphone, Tv, Gamepad2, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { siteLinksQuery } from "@/lib/site-links";
-import { SiteLinkItem } from "@/components/SiteLink";
-import { GameCard } from "@/components/GameCard";
-import { PCAdvisor } from "@/components/PCAdvisor";
-import { GameAdvisor } from "@/components/GameAdvisor";
-import { BannerCarousel } from "@/components/BannerCarousel";
-import { catalogQuery } from "@/lib/catalog";
-import weakPc from "@/assets/fogplay/weak-pc.webp";
-import cloudSaves from "@/assets/fogplay/cloud-saves.webp";
-import gamesBanner from "@/assets/fogplay/games.webp";
+import { PromoDialog } from "@/components/PromoDialog";
+import { catalogQuery, coverOf } from "@/lib/catalog";
+import { useActivePromo } from "@/lib/promo";
+import background from "@/assets/landing/background.webp.asset.json";
+import devices from "@/assets/landing/devices.webp.asset.json";
+import wide from "@/assets/landing/wide.woff2.asset.json";
+import compact from "@/assets/landing/compact.woff2.asset.json";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "МТС Fog Play — облачный гейминг" },
-      { name: "description", content: "Играй в ПК-игры без скачивания на смартфоне, компьютере, макбуке или ТВ." },
-      { property: "og:title", content: "МТС Fog Play — облачный гейминг" },
-      { property: "og:description", content: "Тысячи игр на максимальных настройках прямо в браузере." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "МТС Fog Play — облачный гейминг от 24 ₽/час" }, { name: "description", content: "Запускай ПК-игры в облаке на разных устройствах. Выбери игру и активируй промокод на игровые часы." }, { property: "og:title", content: "МТС Fog Play — облачный гейминг" }, { property: "og:description", content: "Игры на максимальных настройках в облаке, без подписки." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }], links: [{ rel: "preload", href: wide.url, as: "font", type: "font/woff2", crossOrigin: "anonymous" }] }),
   loader: ({ context }) => context.queryClient.ensureQueryData(catalogQuery),
   errorComponent: () => <main className="p-10 text-center">Не удалось загрузить игры</main>,
-  notFoundComponent: () => <main className="p-10 text-center">Страница не найдена</main>,
-  component: Index,
+  component: Home,
 });
-
-
-function Logo() {
-  return <div className="flex items-center gap-2 font-bold leading-none"><span className="flex size-7 items-end justify-center rounded-sm bg-primary pb-1 text-primary-foreground">⌁</span><span>МТС<br />FOG PLAY</span><sup className="text-muted-foreground">β</sup></div>;
-}
-
-function Index() {
-  const [search, setSearch] = useState("");
-  const [cookie, setCookie] = useState(true);
-  const [menu, setMenu] = useState(false);
+function Logo() { return <Link to="/" className="fog-logo" aria-label="МТС Fog Play"><span className="fog-logo-mark">⌁</span><span>МТС<br />FOG PLAY</span><sup>β</sup></Link>; }
+function Home() {
   const { data } = useSuspenseQuery(catalogQuery);
-  const [genre, setGenre] = useState("all");
-  const genreScroll = useRef<HTMLDivElement>(null);
-  const genreDrag = useRef({ down: false, x: 0, left: 0, moved: false });
-  const games = data.games;
-  const genres = [...data.categories, { id: "all", name: "Все жанры", slug: "all" }];
-  const filtered = useMemo(() => games.filter((game) => game.title.toLowerCase().includes(search.toLowerCase()) && (genre === "all" || game.category?.slug === genre)), [games, search, genre]);
-  const links = useQuery(siteLinksQuery).data ?? [];
-  const headerLinks = links.filter((l) => l.placement === "header");
-  const footerLinks = links.filter((l) => l.placement === "footer");
-
-  return (
-    <main className="min-h-screen overflow-hidden bg-background text-foreground">
-      <header className="mx-auto flex h-18 max-w-6xl items-center justify-between px-4 md:px-6">
-        <Logo />
-        <nav className="hidden items-center gap-6 text-sm md:flex">
-          {headerLinks.map((l) => <SiteLinkItem key={l.id} url={l.url}>{l.label}</SiteLinkItem>)}
-          <Link to="/support" aria-label="Поддержка"><Headphones size={20} className="text-brand-blue" /></Link>
-          <Button asChild className="h-9 gap-2 px-4" variant="icon"><Link to="/profile"><UserRound size={16} /> Профиль</Link></Button>
-        </nav>
-        <Link to="/support" aria-label="Поддержка" className="ml-auto mr-2 md:hidden"><Headphones size={22} className="text-brand-blue" /></Link><Button aria-label="Меню" variant="ghost" className="size-10 md:hidden" onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</Button>
-      </header>
-      {menu && <nav className="mx-4 mb-4 grid gap-3 border-b border-border pb-4 text-sm md:hidden">{headerLinks.map((l) => <SiteLinkItem key={l.id} url={l.url}>{l.label}</SiteLinkItem>)}<Button asChild className="h-10"><Link to="/profile">Профиль</Link></Button></nav>}
-
-      <section className="hero-band mx-auto max-w-6xl px-6 py-5 md:px-8">
-        <div className="max-w-xl">
-          <h1 className="text-3xl font-bold"><span className="text-brand-blue">Облачный</span> <span className="text-brand-pink">гейминг</span></h1>
-          <p className="mt-2 text-sm leading-relaxed text-foreground/90">Играй в ПК-игры без скачивания на смартфоне, компьютере, макбуке или ТВ. МТС Fog Play объединяет геймеров и владельцев игровых ПК.</p>
-        </div>
-        <Gamepad2 className="hero-gamepad" strokeWidth={1.2} />
-      </section>
-
-      <div className="mx-auto max-w-6xl px-4 pb-16 md:px-6">
-        <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center">
-          <div className="flex gap-6 text-xl font-bold"><Link to="/computer" className="text-foreground">Игры</Link><Link to="/servers" className="text-brand-blue/50 hover:text-brand-blue">Серверы</Link></div>
-          <label className="flex h-12 flex-1 items-center gap-3 rounded-md bg-input px-4"><Search size={22} /><input value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" placeholder="Введите название игры" /></label>
-        </div>
-
-        <BannerCarousel banners={data.banners.length ? data.banners : [{ id: "1", title: "Если у тебя слабый ПК", description: "играй без лагов на Fog Play", image_url: weakPc, link_url: "" }, { id: "2", title: "Играй в тысячи игр", description: "платишь только за время", image_url: gamesBanner, link_url: "" }, { id: "3", title: "Сейвы хранятся в облаке", description: "продолжай с того места", image_url: cloudSaves, link_url: "" }]} />
-
-        {data.games.some((g) => g.discount_percent > 0) && <section className="mt-8">
-          <h2 className="flex items-center gap-2 text-2xl font-bold"><span className="rounded-full bg-destructive px-3 py-0.5 text-sm font-black text-destructive-foreground">SALE</span>Скидки и акции</h2>
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">{data.games.filter((g) => g.discount_percent > 0).sort((a, b) => b.discount_percent - a.discount_percent).slice(0, 8).map((g) => <GameCard key={g.id} game={g} />)}</div>
-        </section>}
-
-        <section className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">
-          {filtered.slice(0, 4).map((game) => <GameCard key={game.id} game={game} />)}
-        </section>
-
-        <div
-          ref={genreScroll}
-          className="genre-scroll no-scrollbar mt-8 flex cursor-grab select-none gap-3 overflow-x-auto pb-2 active:cursor-grabbing"
-          onPointerDown={(e) => { if (e.pointerType !== "mouse") return; genreDrag.current = { down: true, x: e.clientX, left: genreScroll.current!.scrollLeft, moved: false }; }}
-          onPointerMove={(e) => { const d = genreDrag.current; if (!d.down) return; const dx = e.clientX - d.x; if (Math.abs(dx) > 5) d.moved = true; genreScroll.current!.scrollLeft = d.left - dx; }}
-          onPointerUp={() => { genreDrag.current.down = false; }}
-          onPointerLeave={() => { genreDrag.current.down = false; }}
-          onClickCapture={(e) => { if (genreDrag.current.moved) { e.preventDefault(); e.stopPropagation(); genreDrag.current.moved = false; } }}
-        >
-          {genres.map((c) => <Button key={c.slug} variant={genre === c.slug ? "primary" : "icon"} onClick={() => setGenre(c.slug)} className="h-14 shrink-0 gap-2 px-6 text-base"><Gamepad2 size={22} />{c.name}</Button>)}
-        </div>
-
-        <div className="mt-7 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">Сортировать по: <button className="flex items-center gap-1 font-semibold text-foreground">Сначала популярные <ChevronDown size={15} /></button></div>
-          <Button aria-label="Фильтры" variant="icon" className="size-11"><SlidersHorizontal size={20} /></Button>
-        </div>
-
-        {filtered.length > 0 ? <section className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">{filtered.slice(4).map((game) => <GameCard key={game.id} game={game} />)}</section> : <div className="py-24 text-center"><h2 className="text-xl font-bold">По заданным параметрам поиска ничего не найдено</h2><p className="mt-2 text-muted-foreground">Попробуй изменить запрос</p></div>}
-        <GameAdvisor genres={data.categories} />
-        <PCAdvisor />
-      </div>
-
-      <footer className="border-t border-border"><div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 text-sm text-muted-foreground md:grid-cols-4 md:px-6"><Logo /><div className="grid grid-cols-2 gap-2 md:col-span-3 md:grid-cols-3">{footerLinks.map((l) => <SiteLinkItem key={l.id} url={l.url} className="hover:text-foreground">{l.label}</SiteLinkItem>)}<span>© 2026</span></div></div></footer>
-
-      {cookie && <div className="cookie-bar"><span>Наш сайт использует cookie для улучшения работоспособности сайта. <a href="#cookies" className="underline">Подробнее</a></span><Button variant="ghost" className="h-8 px-3 text-sm text-cookie-foreground" onClick={() => setCookie(false)}>Хорошо</Button></div>}
-    </main>
-  );
+  const [promo, setPromo] = useState(false); const [menu, setMenu] = useState(false); const [cookie, setCookie] = useState(true);
+  const active = useActivePromo();
+  const preferred = ["God of War", "Cyberpunk 2077", "ELDEN RING", "Hogwarts Legacy", "Red Dead Redemption 2", "Forza Horizon 5"];
+  const popular = preferred.flatMap((title) => data.games.filter((g) => g.title.toLowerCase() === title.toLowerCase()));
+  const games = [...popular, ...data.games.filter((g) => !popular.some((p) => p.id === g.id))].slice(0, 12);
+  return <main className="fog-landing" style={{ backgroundImage: `url(${background.url})` }}>
+    <style>{`@font-face{font-family:FogWide;src:url('${wide.url}') format('woff2');font-weight:700;font-display:swap}@font-face{font-family:FogCompact;src:url('${compact.url}') format('woff2');font-weight:400;font-display:swap}`}</style>
+    <header className="fog-header"><Logo /><nav className="hidden items-center gap-5 text-sm md:flex"><Link to="/servers">Серверы</Link><Link to="/computer">Игры</Link><a href="#faq">FAQ</a><Link to="/support">Поддержка</Link><Button asChild variant="icon" className="h-9"><Link to="/profile">Профиль</Link></Button></nav><Button variant="ghost" aria-label="Меню" className="md:hidden" onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</Button></header>
+    {menu && <nav className="fog-mobile-nav"><Link to="/servers">Серверы</Link><Link to="/computer">Игры</Link><a href="#faq">FAQ</a><Link to="/profile">Профиль</Link></nav>}
+    <section className="fog-home-hero"><h1>Облачный гейминг<br /><span>от 24 ₽/час</span></h1><p>Запускай любые игры на максималках в облаке со старенького ноутбука и других устройств за 3 минуты. Играй в браузере или приложениях</p><div className="fog-actions"><Button asChild className="fog-gradient-button"><Link to="/computer">Выбрать игру</Link></Button><Button className="fog-secondary-button" onClick={() => setPromo(true)}>Есть промокод</Button></div>{active.data && <p className="fog-active-discount">{active.data.code} · −{active.data.discount_percent}% на часы следующей игры</p>}</section>
+    <section aria-label="Популярные игры" className="fog-game-strips">{[games.slice(0,6), games.slice(6,12)].map((row, i) => <div key={i} className={`fog-game-track fog-game-track-${i}`}>{[...row, ...row].map((g,j) => <Link key={`${g.id}-${j}`} to="/computer/$slug" params={{slug:g.slug}} className="fog-game-tile" aria-label={g.title}><img src={coverOf(g)} alt={g.title} loading="lazy" /><span><Cloud size={18}/></span></Link>)}</div>)}<Button asChild variant="ghost" className="fog-more"><Link to="/computer">Показать еще <ArrowDown size={18}/></Link></Button></section>
+    <section className="fog-about fog-section"><h2>У нас нет подписок<br />и абонементов</h2><p>Ты арендуешь сервер на время,<br />какое захочешь сам!</p><div className="fog-actions"><Button asChild className="fog-gradient-button"><Link to="/servers">Выбрать сервер</Link></Button></div></section>
+    <section className="fog-section"><h2>Почему МТС Fog Play?</h2><div className="fog-benefits">{[{icon:Clock3,title:"Плати только за время",text:"Выбирай игру и оплачивай игровые часы без подписки."},{icon:Gamepad2,title:"Любимые игры в облаке",text:`${data.games.length} игр в каталоге — от громких новинок до любимой классики.`},{icon:ShieldCheck,title:"Выбирай свой сервер",text:"Подбери компьютер по мощности, цене и расположению."},{icon:Cloud,title:"Продолжай с сохранения",text:"Игровой прогресс сохраняется в облаке, если выбранная игра поддерживает облачные сохранения."}].map(({icon:I,title,text}) => <article key={title}><div className="fog-feature-icon"><I size={28}/></div><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+    <section className="fog-section fog-devices"><h2>Играй в облаке<br />с разных девайсов</h2><img src={devices.url} alt="Игры на компьютере, ноутбуке, смартфоне и телевизоре" loading="lazy"/><div className="fog-device-labels">{[{icon:Monitor,title:"Браузер",text:"На компьютере и macOS"},{icon:Monitor,title:"Приложение",text:"На ПК для Windows"},{icon:Smartphone,title:"Смартфон Android",text:"На смартфоне"},{icon:Tv,title:"Телевизоры и приставки",text:"Android TV"}].map(({icon:I,title,text}) => <div key={title}><I size={25}/><h3>{title}</h3><p>{text}</p></div>)}</div><Button asChild className="fog-gradient-button mt-10"><Link to="/computer">Играть в браузере</Link></Button></section>
+    <section className="fog-section fog-bottom-offer"><h2>{data.games.length} игр в каталоге</h2><p>Открой для себя новые миры и запускай любимые игры в облаке</p><div className="fog-actions"><Button asChild className="fog-gradient-button"><Link to="/computer">Играть</Link></Button><Button className="fog-secondary-button" onClick={() => setPromo(true)}>Есть промокод</Button></div></section>
+    <section id="faq" className="fog-section fog-faq"><h2>Частые вопросы</h2>{[{q:"Что такое облачный гейминг?",a:"Игра запускается на удалённом игровом компьютере, а изображение передаётся на твоё устройство."},{q:"Как начать играть?",a:"Выбери игру в каталоге, количество часов и свободный компьютер. Для аренды войди в профиль и пополни баланс."},{q:"Как действует промокод?",a:"Активируй код через кнопку «Есть промокод». Скидка применяется ко всем выбранным часам следующей аренды. Каждый код можно использовать один раз."}].map(({q,a}) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</section>
+    <footer className="fog-footer"><Logo /><div><Link to="/computer">Игры</Link><Link to="/servers">Серверы</Link><Link to="/support">Поддержка</Link><Link to="/profile">Профиль</Link><span>© 2026 МТС Fog Play</span></div></footer>
+    {cookie && <div className="cookie-bar"><span>Наш сайт использует cookie для улучшения работоспособности сайта.</span><Button variant="ghost" className="text-cookie-foreground" onClick={() => setCookie(false)}>Хорошо</Button></div>}
+    <PromoDialog open={promo} onOpenChange={setPromo}/>
+  </main>;
 }
-

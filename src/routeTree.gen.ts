@@ -27,6 +27,7 @@ import { Route as AuthenticatedAdminComputersRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminGamesRouteImport } from './routes/_authenticated/admin.games'
 import { Route as AuthenticatedAdminLinksRouteImport } from './routes/_authenticated/admin.links'
 import { Route as AuthenticatedAdminPlayersRouteImport } from './routes/_authenticated/admin.players'
+import { Route as AuthenticatedAdminPromosRouteImport } from './routes/_authenticated/admin.promos'
 import { Route as AuthenticatedAdminRevenueRouteImport } from './routes/_authenticated/admin.revenue'
 import { Route as AuthenticatedAdminStatsRouteImport } from './routes/_authenticated/admin.stats'
 import { Route as AuthenticatedAdminTicketsRouteImport } from './routes/_authenticated/admin.tickets'
@@ -127,6 +128,12 @@ const AuthenticatedAdminPlayersRoute =
     path: '/players',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPromosRoute =
+  AuthenticatedAdminPromosRouteImport.update({
+    id: '/promos',
+    path: '/promos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminRevenueRoute =
   AuthenticatedAdminRevenueRouteImport.update({
     id: '/revenue',
@@ -172,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/admin/games': typeof AuthenticatedAdminGamesRoute
   '/admin/links': typeof AuthenticatedAdminLinksRoute
   '/admin/players': typeof AuthenticatedAdminPlayersRoute
+  '/admin/promos': typeof AuthenticatedAdminPromosRoute
   '/admin/revenue': typeof AuthenticatedAdminRevenueRoute
   '/admin/stats': typeof AuthenticatedAdminStatsRoute
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
@@ -195,6 +203,7 @@ export interface FileRoutesByTo {
   '/admin/games': typeof AuthenticatedAdminGamesRoute
   '/admin/links': typeof AuthenticatedAdminLinksRoute
   '/admin/players': typeof AuthenticatedAdminPlayersRoute
+  '/admin/promos': typeof AuthenticatedAdminPromosRoute
   '/admin/revenue': typeof AuthenticatedAdminRevenueRoute
   '/admin/stats': typeof AuthenticatedAdminStatsRoute
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
@@ -221,6 +230,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/games': typeof AuthenticatedAdminGamesRoute
   '/_authenticated/admin/links': typeof AuthenticatedAdminLinksRoute
   '/_authenticated/admin/players': typeof AuthenticatedAdminPlayersRoute
+  '/_authenticated/admin/promos': typeof AuthenticatedAdminPromosRoute
   '/_authenticated/admin/revenue': typeof AuthenticatedAdminRevenueRoute
   '/_authenticated/admin/stats': typeof AuthenticatedAdminStatsRoute
   '/_authenticated/admin/tickets': typeof AuthenticatedAdminTicketsRoute
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/admin/games'
     | '/admin/links'
     | '/admin/players'
+    | '/admin/promos'
     | '/admin/revenue'
     | '/admin/stats'
     | '/admin/tickets'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin/games'
     | '/admin/links'
     | '/admin/players'
+    | '/admin/promos'
     | '/admin/revenue'
     | '/admin/stats'
     | '/admin/tickets'
@@ -295,6 +307,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/games'
     | '/_authenticated/admin/links'
     | '/_authenticated/admin/players'
+    | '/_authenticated/admin/promos'
     | '/_authenticated/admin/revenue'
     | '/_authenticated/admin/stats'
     | '/_authenticated/admin/tickets'
@@ -442,6 +455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPlayersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/promos': {
+      id: '/_authenticated/admin/promos'
+      path: '/promos'
+      fullPath: '/admin/promos'
+      preLoaderRoute: typeof AuthenticatedAdminPromosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/revenue': {
       id: '/_authenticated/admin/revenue'
       path: '/revenue'
@@ -488,6 +508,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminGamesRoute: typeof AuthenticatedAdminGamesRoute
   AuthenticatedAdminLinksRoute: typeof AuthenticatedAdminLinksRoute
   AuthenticatedAdminPlayersRoute: typeof AuthenticatedAdminPlayersRoute
+  AuthenticatedAdminPromosRoute: typeof AuthenticatedAdminPromosRoute
   AuthenticatedAdminRevenueRoute: typeof AuthenticatedAdminRevenueRoute
   AuthenticatedAdminStatsRoute: typeof AuthenticatedAdminStatsRoute
   AuthenticatedAdminTicketsRoute: typeof AuthenticatedAdminTicketsRoute
@@ -502,6 +523,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminGamesRoute: AuthenticatedAdminGamesRoute,
   AuthenticatedAdminLinksRoute: AuthenticatedAdminLinksRoute,
   AuthenticatedAdminPlayersRoute: AuthenticatedAdminPlayersRoute,
+  AuthenticatedAdminPromosRoute: AuthenticatedAdminPromosRoute,
   AuthenticatedAdminRevenueRoute: AuthenticatedAdminRevenueRoute,
   AuthenticatedAdminStatsRoute: AuthenticatedAdminStatsRoute,
   AuthenticatedAdminTicketsRoute: AuthenticatedAdminTicketsRoute,

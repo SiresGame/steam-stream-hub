@@ -1,6 +1,7 @@
 import { Cpu, Flame, MapPin, MemoryStick, Monitor, Wifi } from "lucide-react";
 import { RentButton, type Prepaid } from "./RentButton";
 import { formatPlaytime, useBalance } from "@/lib/playtime";
+import { promoPrice, useActivePromo } from "@/lib/promo";
 
 type Computer = { id: string; name: string; cpu: string; gpu: string; ram_gb: number; city: string; price: number; available: boolean };
 
@@ -12,6 +13,7 @@ function stats(id: string, price: number) {
 
 export function ComputerList({ computers, prepaid }: { computers: Computer[]; prepaid?: Prepaid }) {
   const balance = useBalance();
+  const promo = useActivePromo();
   if (!computers.length) return null;
   const free = computers.filter((c) => c.available).length;
   return (
@@ -28,8 +30,9 @@ export function ComputerList({ computers, prepaid }: { computers: Computer[]; pr
               <li className="flex items-center gap-2"><MapPin size={14} />{c.city}</li>
               <li className="flex items-center gap-2"><Wifi size={14} />{stats(c.id, c.price).speed} Мбит/с<span className="ml-1 flex items-end gap-0.5" aria-label={`Качество ${stats(c.id, c.price).bars} из 5`}>{[1, 2, 3, 4, 5].map((i) => <span key={i} className={i <= stats(c.id, c.price).bars ? "w-1 rounded-sm bg-primary" : "w-1 rounded-sm bg-muted"} style={{ height: 3 + i * 2 }} />)}</span></li>
             </ul>
-            {!prepaid && <><p className="mt-3 text-lg font-semibold">{c.price} ₽/час</p>
-            {formatPlaytime(balance, c.price) && <p className="text-xs text-primary">{formatPlaytime(balance, c.price)}</p>}</>}
+            {!prepaid && <><p className="mt-3 text-lg font-semibold">{promoPrice(c.price, promo.data?.discount_percent)} ₽/час</p>
+            {promo.data && <p className="text-xs text-brand-blue">{promo.data.code}: −{promo.data.discount_percent}% на следующую сессию</p>}
+            {formatPlaytime(balance, promoPrice(c.price, promo.data?.discount_percent)) && <p className="text-xs text-primary">{formatPlaytime(balance, promoPrice(c.price, promo.data?.discount_percent))}</p>}</>}
             <RentButton id={c.id} name={c.name} disabled={!c.available} prepaid={prepaid} />
           </article>
         ))}

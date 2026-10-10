@@ -18,6 +18,7 @@ const nav = [
   { to: "/admin/players", label: "Игроки и сессии", icon: Users },
   { to: "/admin/revenue", label: "Доходы и вывод", icon: Wallet },
   { to: "/admin/banners", label: "Баннеры", icon: Image },
+  { to: "/admin/promos", label: "Промокоды", icon: KeyRound },
   { to: "/admin/tickets", label: "Тикеты", icon: LifeBuoy },
   { to: "/admin/accounts", label: "Аккаунты игр", icon: KeyRound },
   { to: "/admin/links", label: "Разделы сайта", icon: PanelsTopLeft },
