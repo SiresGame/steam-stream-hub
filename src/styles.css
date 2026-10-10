@@ -218,10 +218,8 @@
 .hud-panel::before { content: ""; position: absolute; top: 0; left: 18px; width: 64px; height: 2px; background: linear-gradient(90deg, var(--brand-blue), var(--brand-pink)); box-shadow: 0 0 12px var(--brand-blue); }
 .hud-scan::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px circle at 85% 0%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 60%), repeating-linear-gradient(0deg, oklch(1 0 0 / 2.5%) 0 1px, transparent 1px 4px); }
 .hud-ring { position: relative; border-radius: 9999px; padding: 5px; box-shadow: 0 0 30px -6px var(--primary); }
-.hud-ring::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: conic-gradient(from 0deg, var(--brand-blue), transparent 40%, var(--brand-pink) 70%, transparent); animation: hud-spin 6s linear infinite; }
 .hud-ring > * { position: relative; }
 .hud-ring > .hud-online { position: absolute; right: 8px; bottom: 8px; width: 16px; height: 16px; border-radius: 9999px; background: var(--chart-2); border: 3px solid var(--card); }
-@keyframes hud-spin { to { transform: rotate(360deg); } }
 
 .hud-side { background: linear-gradient(180deg, color-mix(in oklab, var(--card) 90%, transparent), var(--background)); }
 .hud-nav { display: flex; flex-shrink: 0; align-items: center; gap: .75rem; border-radius: .6rem; padding: .7rem .9rem; font-size: .9rem; color: var(--muted-foreground); text-align: left; transition: background .2s, color .2s; }
