@@ -88,7 +88,15 @@ function Index() {
           {filtered.slice(0, 4).map((game) => <GameCard key={game.id} game={game} />)}
         </section>
 
-        <div className="genre-scroll mt-8 flex gap-3 overflow-x-auto pb-2">
+        <div
+          ref={genreScroll}
+          className="genre-scroll no-scrollbar mt-8 flex cursor-grab select-none gap-3 overflow-x-auto pb-2 active:cursor-grabbing"
+          onPointerDown={(e) => { if (e.pointerType !== "mouse") return; genreDrag.current = { down: true, x: e.clientX, left: genreScroll.current!.scrollLeft, moved: false }; }}
+          onPointerMove={(e) => { const d = genreDrag.current; if (!d.down) return; const dx = e.clientX - d.x; if (Math.abs(dx) > 5) d.moved = true; genreScroll.current!.scrollLeft = d.left - dx; }}
+          onPointerUp={() => { genreDrag.current.down = false; }}
+          onPointerLeave={() => { genreDrag.current.down = false; }}
+          onClickCapture={(e) => { if (genreDrag.current.moved) { e.preventDefault(); e.stopPropagation(); genreDrag.current.moved = false; } }}
+        >
           {genres.map((c) => <Button key={c.slug} variant={genre === c.slug ? "primary" : "icon"} onClick={() => setGenre(c.slug)} className="h-14 shrink-0 gap-2 px-6 text-base"><Gamepad2 size={22} />{c.name}</Button>)}
         </div>
 
