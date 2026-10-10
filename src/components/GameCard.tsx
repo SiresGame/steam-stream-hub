@@ -3,10 +3,12 @@ import { useRef } from "react";
 import { Cloud, Sparkles } from "lucide-react";
 import { coverOf, effectivePrice, type CatalogGame } from "@/lib/catalog";
 import { formatPlaytime, useBalance } from "@/lib/playtime";
+import { promoPrice, useActivePromo } from "@/lib/promo";
 
 export function GameCard({ game }: { game: CatalogGame }) {
   const balance = useBalance();
-  const rate = effectivePrice(game);
+  const promo = useActivePromo();
+  const rate = promoPrice(effectivePrice(game), promo.data?.discount_percent);
   const playtime = formatPlaytime(balance, rate);
   const ref = useRef<HTMLAnchorElement>(null);
 

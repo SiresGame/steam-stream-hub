@@ -308,3 +308,5 @@
  .fog-promo-title { font-size:22px; }
 }
 @media(prefers-reduced-motion:reduce) { .fog-game-track { animation:none; } }
+.fog-landing { background-blend-mode:soft-light; }
+.fog-promo-dialog { z-index:51; }
