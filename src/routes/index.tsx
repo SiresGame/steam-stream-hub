@@ -43,6 +43,8 @@ function Index() {
   const [menu, setMenu] = useState(false);
   const { data } = useSuspenseQuery(catalogQuery);
   const [genre, setGenre] = useState("all");
+  const genreScroll = useRef<HTMLDivElement>(null);
+  const genreDrag = useRef({ down: false, x: 0, left: 0, moved: false });
   const games = data.games;
   const genres = [...data.categories, { id: "all", name: "Все жанры", slug: "all" }];
   const filtered = useMemo(() => games.filter((game) => game.title.toLowerCase().includes(search.toLowerCase()) && (genre === "all" || game.category?.slug === genre)), [games, search, genre]);
