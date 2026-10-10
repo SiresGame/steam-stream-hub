@@ -66,7 +66,7 @@ function Profile() {
   const custom = customTabs.find((t) => t.id === tab);
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <div className="profile-scope flex min-h-screen flex-col lg:flex-row">
       <aside className="hud-side flex shrink-0 flex-col border-b border-border lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:border-b-0 lg:border-r">
         <Link to="/" className="flex items-center gap-2 px-5 py-5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft size={16} />На главную</Link>
         <nav className="no-scrollbar flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col">

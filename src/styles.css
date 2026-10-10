@@ -202,12 +202,23 @@
 .game-backdrop { filter: blur(40px) saturate(1.4); opacity: .55; animation: backdrop-drift 18s ease-in-out infinite alternate; }
 .play-cta { animation: cta-pulse 2.2s infinite; }
 
+/* Profile palette — the profile screen follows the homepage blue/pink accents
+   instead of the red primary used elsewhere. Everything inside .profile-scope
+   (panels, buttons, links, badges, radar) inherits these overrides. */
+.profile-scope {
+  --primary: oklch(0.72 0.15 240);
+  --primary-foreground: oklch(0.2 0.06 258);
+  --ring: oklch(0.72 0.15 240);
+  --accent: oklch(0.28 0.06 262);
+  --accent-foreground: oklch(0.97 0.01 250);
+}
+
 /* Profile HUD */
 .hud-panel { position: relative; overflow: hidden; border: 1px solid color-mix(in oklab, var(--primary) 28%, var(--border)); border-radius: 18px; background: linear-gradient(145deg, color-mix(in oklab, var(--card) 88%, transparent), color-mix(in oklab, var(--background) 70%, transparent)); backdrop-filter: blur(10px); box-shadow: 0 0 0 1px oklch(1 0 0 / 3%) inset, 0 18px 40px -24px color-mix(in oklab, var(--primary) 60%, transparent); }
-.hud-panel::before { content: ""; position: absolute; top: 0; left: 18px; width: 64px; height: 2px; background: var(--primary); box-shadow: 0 0 12px var(--primary); }
+.hud-panel::before { content: ""; position: absolute; top: 0; left: 18px; width: 64px; height: 2px; background: linear-gradient(90deg, var(--brand-blue), var(--brand-pink)); box-shadow: 0 0 12px var(--brand-blue); }
 .hud-scan::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px circle at 85% 0%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 60%), repeating-linear-gradient(0deg, oklch(1 0 0 / 2.5%) 0 1px, transparent 1px 4px); }
 .hud-ring { position: relative; border-radius: 9999px; padding: 5px; box-shadow: 0 0 30px -6px var(--primary); }
-.hud-ring::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: conic-gradient(from 0deg, var(--primary), transparent 40%, var(--primary) 70%, transparent); animation: hud-spin 6s linear infinite; }
+.hud-ring::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: conic-gradient(from 0deg, var(--brand-blue), transparent 40%, var(--brand-pink) 70%, transparent); animation: hud-spin 6s linear infinite; }
 .hud-ring > * { position: relative; }
 .hud-ring > .hud-online { position: absolute; right: 8px; bottom: 8px; width: 16px; height: 16px; border-radius: 9999px; background: var(--chart-2); border: 3px solid var(--card); }
 @keyframes hud-spin { to { transform: rotate(360deg); } }
