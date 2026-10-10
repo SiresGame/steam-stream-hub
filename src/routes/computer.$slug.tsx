@@ -11,6 +11,7 @@ import { catalogQuery, coverOf, effectivePrice, gameQuery } from "@/lib/catalog"
 import { GameCard } from "@/components/GameCard";
 import { BuyAccount } from "@/components/BuyAccount";
 import { formatPlaytime, useBalance } from "@/lib/playtime";
+import { promoPrice, useActivePromo } from "@/lib/promo";
 
 export const Route = createFileRoute("/computer/$slug")({
   loader: async ({ context, params }) => { const game = await context.queryClient.ensureQueryData(gameQuery(params.slug)); if (!game) throw notFound(); return { title: game.title, about: game.about, image: game.image_url }; },
@@ -38,7 +39,8 @@ function GamePage() {
   const { slug } = Route.useParams();
   const { data: game } = useSuspenseQuery(gameQuery(slug));
   const balance = useBalance();
-  const rate = game ? effectivePrice(game) : 0;
+  const activePromo = useActivePromo();
+  const rate = game ? promoPrice(effectivePrice(game), activePromo.data?.discount_percent) : 0;
   const playtime = formatPlaytime(balance, rate);
   const [open, setOpen] = useState(false);
   const [hours, setHours] = useState(3);
@@ -72,6 +74,7 @@ function GamePage() {
 
       <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-6">
         <Link to="/computer" className="inline-flex items-center gap-2 rounded-full bg-card/60 px-4 py-2 text-sm backdrop-blur transition hover:bg-card"><ArrowLeft size={16} /> Каталог игр</Link>
+        {activePromo.data && <p className="mt-4 text-brand-blue">Промокод {activePromo.data.code}: −{activePromo.data.discount_percent}% на все часы следующей сессии</p>}
 
         <div className="mt-8 grid items-start gap-10 md:grid-cols-[1.3fr_1fr]">
           <div className="fade-up">
