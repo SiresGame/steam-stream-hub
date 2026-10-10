@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronDown, Gamepad2, Headphones, Menu, Search, SlidersHorizontal, UserRound, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -43,6 +43,8 @@ function Index() {
   const [menu, setMenu] = useState(false);
   const { data } = useSuspenseQuery(catalogQuery);
   const [genre, setGenre] = useState("all");
+  const genreScroll = useRef<HTMLDivElement>(null);
+  const genreDrag = useRef({ down: false, x: 0, left: 0, moved: false });
   const games = data.games;
   const genres = [...data.categories, { id: "all", name: "Все жанры", slug: "all" }];
   const filtered = useMemo(() => games.filter((game) => game.title.toLowerCase().includes(search.toLowerCase()) && (genre === "all" || game.category?.slug === genre)), [games, search, genre]);
@@ -88,7 +90,15 @@ function Index() {
           {filtered.slice(0, 4).map((game) => <GameCard key={game.id} game={game} />)}
         </section>
 
-        <div className="genre-scroll mt-8 flex gap-3 overflow-x-auto pb-2">
+        <div
+          ref={genreScroll}
+          className="genre-scroll no-scrollbar mt-8 flex cursor-grab select-none gap-3 overflow-x-auto pb-2 active:cursor-grabbing"
+          onPointerDown={(e) => { if (e.pointerType !== "mouse") return; genreDrag.current = { down: true, x: e.clientX, left: genreScroll.current!.scrollLeft, moved: false }; }}
+          onPointerMove={(e) => { const d = genreDrag.current; if (!d.down) return; const dx = e.clientX - d.x; if (Math.abs(dx) > 5) d.moved = true; genreScroll.current!.scrollLeft = d.left - dx; }}
+          onPointerUp={() => { genreDrag.current.down = false; }}
+          onPointerLeave={() => { genreDrag.current.down = false; }}
+          onClickCapture={(e) => { if (genreDrag.current.moved) { e.preventDefault(); e.stopPropagation(); genreDrag.current.moved = false; } }}
+        >
           {genres.map((c) => <Button key={c.slug} variant={genre === c.slug ? "primary" : "icon"} onClick={() => setGenre(c.slug)} className="h-14 shrink-0 gap-2 px-6 text-base"><Gamepad2 size={22} />{c.name}</Button>)}
         </div>
 
