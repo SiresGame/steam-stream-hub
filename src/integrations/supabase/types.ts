@@ -377,6 +377,74 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount_percent: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          uses_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount_percent: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          uses_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          uses_count?: number
+        }
+        Relationships: []
+      }
+      promo_redemptions: {
+        Row: {
+          consumed_at: string | null
+          discount_percent: number
+          id: string
+          promo_id: string
+          redeemed_at: string
+          user_id: string
+        }
+        Insert: {
+          consumed_at?: string | null
+          discount_percent: number
+          id?: string
+          promo_id: string
+          redeemed_at?: string
+          user_id: string
+        }
+        Update: {
+          consumed_at?: string | null
+          discount_percent?: number
+          id?: string
+          promo_id?: string
+          redeemed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_redemptions_promo_id_fkey"
+            columns: ["promo_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_sessions: {
         Row: {
           computer_id: string | null
@@ -603,6 +671,7 @@ export type Database = {
       }
       admin_settle_all: { Args: never; Returns: undefined }
       buy_game_account: { Args: { _game_id: string }; Returns: string }
+      consume_active_promo: { Args: { _uid: string }; Returns: number }
       end_rental: { Args: { _session_id: string }; Returns: undefined }
       game_account_offer: {
         Args: { _game_id: string }
@@ -617,6 +686,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      my_active_promo: {
+        Args: never
+        Returns: {
+          code: string
+          discount_percent: number
+        }[]
       }
       my_profile: {
         Args: never
@@ -642,6 +718,7 @@ export type Database = {
         Args: { _path: string; _visitor_id: string }
         Returns: undefined
       }
+      redeem_promo: { Args: { _code: string }; Returns: number }
       session_url: { Args: { _session_id: string }; Returns: string }
       settle_user: { Args: { _uid: string }; Returns: undefined }
       start_rental: { Args: { _computer_id: string }; Returns: string }
